@@ -29,16 +29,16 @@ sdk-for-android
 将UnityPlayerActivity文件和项目中的UnityPlayerActivity文件合并，替换除了包名（即第一行的package）以外的所有内容，并将onCreate方法里的app key和secret key替换为自己的。
 # 5.修改版本号和游戏名称
 如果需要修改版本号，则打开AndroidManifest.xml文件，修改以下内容：<br>
-![](http://img.suncity.ink/github/2018/05/git_0001.png) 
+![](http://img.suncity.ink/github/2018/05/git_0001.png) <br>
 如果修改游戏名称，则打开文件src\main\res\values\strings.xml，修改app_name:<br>
 ![](http://img.suncity.ink/github/2018/05/git_0002.png) 
 # 6.引入Unity封装文件
 将TCTForUnity.cs拷贝到项目相应目录。TCTForUnity中的方法已经对接到SDK，可以直接调用。调用范例如TestClick.cs文件所示。
 # 7.回调方法
 部分SDK方法的调用需要回调，比如登录功能，TestClick.cs中的调用方法如下所示：<br>
-![](http://img.suncity.ink/github/2018/05/git_0003.png)
+![](http://img.suncity.ink/github/2018/05/git_0003.png)<br>
 项目目录如下：<br>
-![](http://img.suncity.ink/github/2018/05/git_0004.png)
+![](http://img.suncity.ink/github/2018/05/git_0004.png)<br>
 第一个参数Canvas代表的是脚本所挂载的场景名称，第二个参数代表的是回调方法名称。
 # 8. 封装方法简介
 ## 登录方法(login)
