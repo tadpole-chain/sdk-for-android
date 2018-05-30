@@ -12,31 +12,33 @@ sdk-for-android
 将文件tct_v1.0.2.jar拷贝到项目libs文件夹下。<br>
 在项目中的AndroidManifest.xml文件中加入相关权限：<br>
 ```xml
-<uses-permission android:name="android.permission.INTERNET"/><br>
-\<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/><br>
-\<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/><br>
-\<uses-permission android:name="android.permission.READ_PHONE_STATE"/><br>
-\<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/><br>
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 ```
 
 在app中的AndroidManifest.xml文件中加入SDK的登录界面声明：<br>
-\<activity android:name="com.tadpolechain.LoginActivity"
+```xml
+<activity android:name="com.tadpolechain.LoginActivity"
     android:theme="@style/LoginDialog" />
+```
 
 # 4.合并activity
 将UnityPlayerActivity文件和项目中的UnityPlayerActivity文件合并，替换除了包名（即第一行的package）以外的所有内容，并将onCreate方法里的app key和secret key替换为自己的。
 # 5.修改版本号和游戏名称
-如果需要修改版本号，则打开AndroidManifest.xml文件，修改以下内容：
-
-如果修改游戏名称，则打开文件src\main\res\values\strings.xml，修改app_name:
-
+如果需要修改版本号，则打开AndroidManifest.xml文件，修改以下内容：<br>
+![](http://img.suncity.ink/github/2018/05/git_0001.png) 
+如果修改游戏名称，则打开文件src\main\res\values\strings.xml，修改app_name:<br>
+![](http://img.suncity.ink/github/2018/05/git_0002.png) 
 # 6.引入Unity封装文件
 将TCTForUnity.cs拷贝到项目相应目录。TCTForUnity中的方法已经对接到SDK，可以直接调用。调用范例如TestClick.cs文件所示。
 # 7.回调方法
-部分SDK方法的调用需要回调，比如登录功能，TestClick.cs中的调用方法如下所示：
-
-项目目录如下：
-
+部分SDK方法的调用需要回调，比如登录功能，TestClick.cs中的调用方法如下所示：<br>
+![](http://img.suncity.ink/github/2018/05/git_0003.png)
+项目目录如下：<br>
+![](http://img.suncity.ink/github/2018/05/git_0004.png)
 第一个参数Canvas代表的是脚本所挂载的场景名称，第二个参数代表的是回调方法名称。
 # 8. 封装方法简介
 ## 登录方法(login)
@@ -44,12 +46,14 @@ sdk-for-android
 ## 上线方法(online)
 如果之前登录过游戏，再次打开游戏会自动上线，此方法仅用于传递回调方法。
 ## 获得SDK状态(getStatus)
-登录状态有以下值：
+登录状态有以下值：<br>
+```table
 TCTForUnity.Status_Unavailable	0	
 TCTForUnity.Status_Initial	1	
 TCTForUnity.Status_Login	201	已经登录
 TCTForUnity.Status_Online	200	已经上线
 TCTForUnity.Status_Offline	500	已经下线
+```
 
 ## 获得用户信息(getUserInfo)
 可以获得字符串类型的用户信息，暂时仅支持以下参数：Id、Nickname、Avatar。
