@@ -9,16 +9,16 @@ sdk-for-android
 # 2.合并资源文件
 将res中的文件全部复制到项目里src\main\res中，如果有冲突，则直接覆盖。资源文件已做处理，不会影响游戏运行。
 # 3.引入SDK
-将文件tct_v1.0.2.jar拷贝到项目libs文件夹下。
-在项目中的AndroidManifest.xml文件中加入相关权限：
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+将文件tct_v1.0.2.jar拷贝到项目libs文件夹下。\<br>
+在项目中的AndroidManifest.xml文件中加入相关权限：\<br>
+\<uses-permission android:name="android.permission.INTERNET"/>
+\<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+\<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+\<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+\<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 在app中的AndroidManifest.xml文件中加入SDK的登录界面声明：
-<activity android:name="com.tadpolechain.LoginActivity"
+\<activity android:name="com.tadpolechain.LoginActivity"
     android:theme="@style/LoginDialog" />
 
 # 4.合并activity
