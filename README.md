@@ -11,11 +11,13 @@ sdk-for-android
 # 3.引入SDK
 将文件tct_v1.0.2.jar拷贝到项目libs文件夹下。<br>
 在项目中的AndroidManifest.xml文件中加入相关权限：<br>
-\<uses-permission android:name="android.permission.INTERNET"/><br>
+```xml
+<uses-permission android:name="android.permission.INTERNET"/><br>
 \<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/><br>
 \<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/><br>
 \<uses-permission android:name="android.permission.READ_PHONE_STATE"/><br>
 \<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/><br>
+```
 
 在app中的AndroidManifest.xml文件中加入SDK的登录界面声明：<br>
 \<activity android:name="com.tadpolechain.LoginActivity"
