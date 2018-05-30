@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300sp"
+    android:layout_height="280dp"
+    android:background="@drawable/gl_dialog_bg"
+    android:layout_gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_tct_logo"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textColor="#ffffffff"
+            android:gravity="left"
+            android:textSize="16sp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="登录" />
+
+        <TextView
+            android:id="@+id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textColor="#ffbbbbbb"
+            android:textSize="9sp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="A leader in global league game ecology." />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textColor="#ffbbbbbb"
+            android:textSize="9sp"
+            android:text="手机号" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp">
+
+            <TextView
+                android:id="@+id/code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:textColor="#ffffffff"
+                android:textSize="14sp"
+                android:layout_centerVertical="true"
+                android:text="+86▼" />
+
+            <EditText
+                android:id="@+id/telephone"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/code"
+                android:padding="5dp"
+                android:textColor="#ffeeeeff"
+                android:textSize="16sp"
+                android:lines="1"
+                android:inputType="phone"
+                android:background="@null"
+                android:layout_centerVertical="true"
+                android:hint="请输入手机号"/>
+
+            <TextView
+                android:id="@+id/times"
+                android:layout_width="70sp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/telephone"
+                android:textColor="#ff333333"
+                android:textSize="10sp"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:background="@drawable/btn_send_code_hint"
+                android:text="发送验证码" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="#ffff0099" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textColor="#ffbbbbbb"
+            android:textSize="9sp"
+            android:text="验证码" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp">
+
+            <EditText
+                android:id="@+id/sms_code"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:textColor="#ffeeeeff"
+                android:textSize="14sp"
+                android:background="@null"
+                android:lines="1"
+                android:inputType="number"
+                android:layout_centerVertical="true"
+                android:hint="请输入验证码" />
+
+            <TextView
+                android:id="@+id/login_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/sms_code"
+                android:textColor="#ffff0000"
+                android:textSize="10sp"
+                android:layout_centerVertical="true"
+                android:gravity="right" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="#ffff0099" />
+
+        <TextView
+            android:id="@+id/login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gl_dialog_btn"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="#ff99ccff"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="登录" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/select_code"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gl_dialog_bg"
+        android:layout_centerInParent="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/code_china"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/telephone"
+            android:textColor="#ff1dd2d6"
+            android:layout_marginTop="10dp"
+            android:textSize="10sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:background="@drawable/btn_con_code"
+            android:text="中国 : +86" />
+
+        <TextView
+            android:id="@+id/code_us"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/telephone"
+            android:textColor="#ff8990a6"
+            android:layout_marginTop="15dp"
+            android:textSize="10sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:background="@drawable/btn_con_code_hint"
+            android:text="U.S.A : +1" />
+
+        <TextView
+            android:id="@+id/code_ca"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/telephone"
+            android:textColor="#ff8990a6"
+            android:layout_marginTop="15dp"
+            android:textSize="10sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:background="@drawable/btn_con_code_hint"
+            android:text="Canada : +1" />
+
+        <TextView
+            android:id="@+id/code_aus"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/telephone"
+            android:textColor="#ff8990a6"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:textSize="10sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:background="@drawable/btn_con_code_hint"
+            android:text="Australia : +61" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/cancel"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_close"/>
+
+</RelativeLayout>
