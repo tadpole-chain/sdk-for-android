@@ -21,6 +21,12 @@ public class User {
 
     private float profit;
 
+    private float tct_balance;
+
+    private int score;
+
+    private float rmb_rate;
+
     private int status;
 
     @SerializedName("ad_divider")
@@ -107,5 +113,29 @@ public class User {
 
     public void setAppUrl(String appUrl) {
         this.appUrl = appUrl;
+    }
+
+    public float getTct_balance() {
+        return tct_balance;
+    }
+
+    public void setTct_balance(float tct_balance) {
+        this.tct_balance = tct_balance;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public float getRmb_rate() {
+        return rmb_rate;
+    }
+
+    public void setRmb_rate(float rmb_rate) {
+        this.rmb_rate = rmb_rate;
     }
 }

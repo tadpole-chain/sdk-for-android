@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 
 import com.unity3d.player.UnityPlayer;
@@ -81,15 +82,23 @@ public class TCT {
 
     protected static TCTCallback settlementCallBack;
 
+    protected static OnPayResultListener onPayResultListener;
+
     private static NoticeView noticeView;
 
     private static FloatButton floatBtn;
 
-    private static String orientation = "0";
+    public static String orientation = "0";
 
     private static Duration refresh;
 
     private static String version;
+
+    public static float amount;
+
+    public static String content;
+
+    public static PayType payType;
 
     /**
      * 状态，0，起始状态，1，已经初始化，200，已经登录，201，已经上线，500，已经下线
@@ -123,6 +132,7 @@ public class TCT {
                 if(floatBtn != null){
                     floatBtn.setVisibility(View.VISIBLE);
                     floatBtn.setOnClickListener(floatClickListener);
+                    instance().loadAd(null);
                 }
             } else if(msg.what == 998) {
                 if (loginCallBack != null) {
@@ -141,6 +151,7 @@ public class TCT {
                 if(floatBtn != null){
                     floatBtn.setVisibility(View.VISIBLE);
                     floatBtn.setOnClickListener(floatClickListener);
+                    instance().loadAd(null);
                 }
             } else if(msg.what == 1000) {
                 HttpBean bean = (HttpBean)msg.obj;
@@ -188,6 +199,12 @@ public class TCT {
                 if(adCallBack != null){
                     adCallBack.success();
                     adCallBack = null;
+                }
+                if(floatBtn != null){
+                    floatBtn.setVisibility(View.VISIBLE);
+                    floatBtn.setOnClickListener(floatClickListener);
+                    floatBtn.setImageResource(getResource(context,
+                            "drawable", "ic_float_btn_ad"));
                 }
             } else if(msg.what == 1004) {
                 if(adCallBack != null){
@@ -255,6 +272,15 @@ public class TCT {
     }
 
     public void initialize(Context context, String appKey, String secretKey){
+        initialize(context, appKey, secretKey, false);
+    }
+
+    public void initialize(Context context, String appKey, String secretKey, boolean test){
+        if(test){
+            Config.BaseUrl = Config.TestUrl;
+        } else {
+            Config.BaseUrl = Config.TCTUrl;
+        }
         TCT.context = context;
         try {
             PackageInfo packageInfo = context.getApplicationContext()
@@ -313,7 +339,18 @@ public class TCT {
             if(floatBtn.isMoving()) {
                 floatBtn.setMoving(false);
             } else {
-                TCT.instance().showTCT();
+                if(ad == null){
+                    TCT.instance().showTCT();
+                } else {
+                    floatBtn.setImageResource(getResource(context,
+                            "drawable", "ic_float_btn"));
+                    if(noticeView != null){
+                        spt.putLong("tct_ad_show_time", System.currentTimeMillis());
+                        noticeView.showAd();
+                    } else {
+                        ad = null;
+                    }
+                }
             }
         }
     };
@@ -325,7 +362,8 @@ public class TCT {
             }
             return;
         }
-        if(game == null || game.getStatus() == 0){
+        if(game == null || game.getStatus() < 10){
+            tctCallback.error(0, "内测中，暂不支持登录");
             return;
         }
         loginCallBack = tctCallback;
@@ -342,19 +380,6 @@ public class TCT {
 
     public void onPause() {
         offline(null);
-    }
-
-    public void showAd(){
-        if(game == null || game.getStatus() == 0){
-            return;
-        }
-        if(status < 200){
-            return;
-        }
-        Intent intent = new Intent(context, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("type", "ad");
-        context.startActivity(intent);
     }
 
     public void showTCT(){
@@ -418,6 +443,122 @@ public class TCT {
         });
     }
 
+    public void clickAd(){
+
+        if(ad == null){
+            return;
+        }
+
+        String url = Config.BaseUrl + "sdk/ad/click/"+ad.getId();
+        Log.e("test", url);
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url(url).header("Authorization", "Bearer " + Token)
+                .post(RequestBody.create(MediaType.parse("text/x-markdown; charset=utf-8"), "{}")).build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+
+            }
+        });
+    }
+
+    public void showAd(){
+
+        if(ad == null){
+            return;
+        }
+
+        String url = Config.BaseUrl + "sdk/ad/show/"+ad.getId();
+        Log.e("test", url);
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url(url).header("Authorization", "Bearer " + Token)
+                .post(RequestBody.create(MediaType.parse("text/x-markdown; charset=utf-8"), "{}")).build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+
+            }
+        });
+    }
+
+    public void pay(final float amount, final String content, String scene, String method){
+
+        PayScene = scene;
+        PayMethod = method;
+        UnityPlayer.currentActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                OnPayResultListener onPayResultListener = new OnPayResultListener() {
+                    @Override
+                    public void success(int type, float amount, float tct, String orderId) {
+                        unityPayCallBack.success();
+                    }
+
+                    @Override
+                    public void fail(int code, String msg) {
+                        unityPayCallBack.error(code, msg);
+                    }
+                };
+                pay(amount, content, onPayResultListener);
+            }
+        });
+    }
+
+    public static String getPayType() {
+        if(payType == null) {
+            return "{}";
+        } else {
+            return new Gson().toJson(payType);
+        }
+    }
+
+    public void pay(float amount, String content, OnPayResultListener onPayResultListener){
+
+        if(game == null){
+            if(onPayResultListener != null) {
+                onPayResultListener.fail(500, "游戏SDK尚未初始化");
+            }
+        }
+        if(user == null){
+            if(onPayResultListener != null) {
+                onPayResultListener.fail(500, "尚未登录");
+            }
+        }
+        if(content == null || content == ""){
+            if(onPayResultListener != null) {
+                onPayResultListener.fail(501, "消费信息不能为空");
+            }
+        }
+        if(amount <= 0){
+            if(onPayResultListener != null) {
+                onPayResultListener.fail(502, "消费金额必须大于0");
+            }
+        }
+
+        TCT.onPayResultListener = onPayResultListener;
+        TCT.amount = amount;
+        TCT.content = content;
+
+        Intent intent = new Intent(context, LoginActivity.class);
+        intent.putExtra("type", "pay");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
     private void offline(TCTCallback tctCallback){
         handler.removeCallbacks(duration);
         if(status < 200 || user == null || user.getStatus() < 200) {
@@ -467,6 +608,7 @@ public class TCT {
             public void onResponse(Response response) throws IOException {
                 HttpBean<Duration> data = new Gson().fromJson(response.body().string(),
                         new TypeToken<HttpBean<Duration>>(){}.getType());
+                // Log.e("duration", new Gson().toJson(data));
                 if(data != null && data.code == 200) {
                     refresh = data.getData();
                     handler.sendEmptyMessage(1001);
@@ -488,6 +630,10 @@ public class TCT {
 
     protected Ad getAd() {
         return ad;
+    }
+
+    protected void setAd(Ad ad) {
+        TCT.ad = ad;
     }
 
     public String getGameName() {
@@ -701,10 +847,97 @@ public class TCT {
         return orientation;
     }
 
-    protected void loadAd(final TCTCallback callback){
-        String url = Config.BaseUrl + "sdk/game/ad?type=";
+    protected void loadUserBalance(final TCTCallback callback){
+
+        String url = Config.BaseUrl + "sdk/game/balance";
         adCallBack = callback;
-        url += orientation;
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url(url).header("Authorization", "Bearer " + Token).build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+                if(callback != null){
+                    callback.error(0, e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String str = response.body().string();
+                Log.e("test", str);
+                HttpBean<User> us = new Gson().fromJson(str,
+                        new TypeToken<HttpBean<User>>(){}.getType());
+                if(us != null && us.code == 200) {
+                    if(callback != null){
+                        TCT.user.setTct_balance(us.getData().getTct_balance());
+                        TCT.user.setRmb_rate(us.getData().getRmb_rate());
+                        TCT.user.setScore(us.getData().getScore());
+                        callback.success();
+                    }
+                } else {
+                    if(callback != null){
+                        callback.error(us.code, us.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+    protected void pay(float amount, String content, final TCTCallback callback){
+
+        String url = Config.BaseUrl + "sdk/game/pay";
+        Log.e("test", url);
+
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("amount", amount);
+        data.put("content", content);
+
+        Request request = new Request.Builder().url(url).header("Authorization", "Bearer " + Token)
+                .post(RequestBody.create(MediaType.parse("text/x-markdown; charset=utf-8"),
+                        new Gson().toJson(data))).build();
+        final Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+                if(callback != null){
+                    callback.error(0, e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String str = response.body().string();
+                Log.e("test", str);
+                HttpBean<PayType> us = new Gson().fromJson(str,
+                        new TypeToken<HttpBean<PayType>>(){}.getType());
+                if(us != null && us.code == 200) {
+                    payType = us.data;
+                    if(callback != null){
+                        callback.success();
+                    }
+                } else {
+                    if(callback != null){
+                        callback.error(us.code, us.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+    protected void loadAd(final TCTCallback callback){
+
+        long last = spt.getLong("tct_ad_show_time", 0);
+        if(System.currentTimeMillis() - last < 600000){
+            return;
+        }
+
+        String url = Config.BaseUrl + "sdk/ad/load";
+        adCallBack = callback;
 
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url(url).header("Authorization", "Bearer " + Token).build();
@@ -717,7 +950,9 @@ public class TCT {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                HttpBean<Ad> ad = new Gson().fromJson(response.body().string(),
+                String str = response.body().string();
+                Log.e("test", str);
+                HttpBean<Ad> ad = new Gson().fromJson(str,
                         new TypeToken<HttpBean<Ad>>(){}.getType());
                 if(ad != null && ad.code == 200) {
                     TCT.ad = ad.getData();
@@ -841,7 +1076,13 @@ public class TCT {
 
     private String loadDeviceId(Context context){
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        if(tm.getDeviceId() == null || tm.getDeviceId().length() == 0){
+        String did = "";
+        try {
+            did = tm.getDeviceId();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(did == null || did.length() == 0){
             WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             WifiInfo info = wifi.getConnectionInfo();
             if(info.getMacAddress() == null || info.getMacAddress().length() == 0){
@@ -853,7 +1094,7 @@ public class TCT {
                 return MD5.md5(info.getMacAddress()); // 使用mac地址代替DEVICE_ID
             }
         } else {
-            return MD5.md5(tm.getDeviceId()); // DEVICE_ID
+            return MD5.md5(did); // DEVICE_ID
         }
     }
 
@@ -992,7 +1233,7 @@ public class TCT {
     }
 
     private static String LoginScene, LoginMethod, OnlineScene, OnlineMethod,
-            ScoreScene, ScoreMethod, DataScene, DataMethod;
+            ScoreScene, ScoreMethod, DataScene, DataMethod, PayScene, PayMethod;
     private static TCTCallback unityLoginCallBack = new TCTCallback() {
         @Override
         public void success() {
@@ -1002,6 +1243,18 @@ public class TCT {
         @Override
         public void error(int errCode, String msg) {
             UnityPlayer.UnitySendMessage(LoginScene, LoginMethod,
+                    "[" + errCode + "]" + msg);
+        }
+    };
+    private static TCTCallback unityPayCallBack = new TCTCallback() {
+        @Override
+        public void success() {
+            UnityPlayer.UnitySendMessage(PayScene, PayMethod, "success");
+        }
+
+        @Override
+        public void error(int errCode, String msg) {
+            UnityPlayer.UnitySendMessage(PayScene, PayMethod,
                     "[" + errCode + "]" + msg);
         }
     };
@@ -1041,4 +1294,9 @@ public class TCT {
                     "[" + errCode + "]" + msg);
         }
     };
+
+    public interface OnPayResultListener{
+        public void success(int type, float amount, float tct, String orderId);
+        public void fail(int code, String msg);
+    }
 }

@@ -1,12 +1,17 @@
 package com.tadpolechain;
 
-import retrofit2.BaseUrl;
-
 /**
  * Created by lsq on 2018/4/10.
  */
 public class Config {
 
-    protected static final String BaseUrl = "http://192.168.0.118:8010/v1/";//http://api.tadpolechain.com/v1/
+    // http://192.168.0.106:8010/v1/
+    // http://api.tadpolechain.com/v1/
+    // http://dev.tctapi.rocbj.com/v1/
+    protected static String BaseUrl = "https://api.tadpolechain.com/v1/";
+
+    protected static final String TCTUrl = "https://api.tadpolechain.com/v1/";
+
+    protected static final String TestUrl = "http://dev.tctapi.rocbj.com/v1/";
 
 }

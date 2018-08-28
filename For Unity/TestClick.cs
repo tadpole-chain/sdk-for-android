@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 
+
 public class TestClick : MonoBehaviour {
 
     public static string str = "----";
+
+
 
     private void Start()
     {
@@ -12,12 +15,16 @@ public class TestClick : MonoBehaviour {
     public void Click () {
         Debug.Log("点击了登录按钮");
         int status = TCTForUnity.getStatus();
+
         str = "status : " + status;
         if (status == TCTForUnity.Status_Initial)
         {
+
             TCTForUnity.login("Canvas", "BeCallFunc");
         }
         else {
+
+
             str = "UserId : " + TCTForUnity.getUserInfo("Id") +
                 "\nNickname : " + TCTForUnity.getUserInfo("Nickname") +
                 "\nAvatar : " + TCTForUnity.getUserInfo("Avatar");
@@ -60,15 +67,34 @@ public class TestClick : MonoBehaviour {
 
     private void BeCallFunc(string content)
     {
+		Debug.Log("BeCallFunc");
+
         if (content.Equals("success"))
         {
+
             str = "UserId : " + TCTForUnity.getUserInfo("Id") +
                 "\nNickname : " + TCTForUnity.getUserInfo("Nickname") +
                 "\nAvatar : " + TCTForUnity.getUserInfo("Avatar");
         }
         else
         {
-            str = content;
+            str = content;// 错误信息
+        }
+    }
+
+    // 支付的回调方法
+    private void PayCallFunc(string content)
+    {
+		Debug.Log("BeCallFunc");
+
+        if (content.Equals("success"))
+        {
+
+            str = "PayType : " + TCTForUnity.getUserInfo("PayType");
+        }
+        else
+        {
+            str = content;// 错误信息
         }
     }
 

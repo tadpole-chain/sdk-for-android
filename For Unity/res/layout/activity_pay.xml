@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300sp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/gl_dialog_bg"
+    android:layout_gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_tct_logo"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textColor="#ffbbbbbb"
+            android:textSize="9sp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="支付信息：" />
+
+        <TextView
+            android:id="@+id/payInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textColor="#ffffffff"
+            android:gravity="left"
+            android:textSize="16sp"
+            android:text="加载中……" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:background="@drawable/gl_pay_s_bg">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:background="@drawable/gl_pay_s_bg2">
+
+                <TextView
+                    android:id="@+id/tctTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:textColor="#fff66083"
+                    android:textSize="16sp"
+                    android:text="TCT 支付" />
+
+                <TextView
+                    android:id="@+id/tctBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#fff66083"
+                    android:textSize="12sp"
+                    android:layout_below="@+id/tctTitle"
+                    android:text="可用：0 tct" />
+
+                <ImageView
+                    android:layout_width="16sp"
+                    android:layout_height="16sp"
+                    android:layout_margin="10dp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_pay_s"/>
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:background="@drawable/gl_pay_s_bg3">
+
+            <TextView
+                android:id="@+id/scoreTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textColor="#ff606b8d"
+                android:textSize="16sp"
+                android:text="电力值 支付" />
+
+            <TextView
+                android:id="@+id/scoreBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="#ff606b8d"
+                android:textSize="12sp"
+                android:layout_below="@+id/scoreTitle"
+                android:text="可用：0" />
+
+            <ImageView
+                android:layout_width="8sp"
+                android:layout_height="12sp"
+                android:layout_marginLeft="3dp"
+                android:layout_alignBottom="@+id/scoreBalance"
+                android:layout_toRightOf="@+id/scoreBalance"
+                android:src="@drawable/ic_pay_elc"/>
+
+            <ImageView
+                android:layout_width="16sp"
+                android:layout_height="16sp"
+                android:layout_margin="10dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_pay_uns"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:textColor="#ffbbbbbb"
+            android:textSize="9sp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="需支付：" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp">
+
+            <TextView
+                android:id="@+id/payAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffeb5f8d"
+                android:gravity="left"
+                android:textSize="16sp"
+                android:text="0" />
+
+            <TextView
+                android:id="@+id/tvTct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffeb5f8d"
+                android:gravity="left"
+                android:textSize="12sp"
+                android:layout_marginLeft="3dp"
+                android:layout_alignBottom="@+id/payAmount"
+                android:layout_toRightOf="@+id/payAmount"
+                android:text="tct" />
+
+            <ImageView
+                android:id="@+id/ivScore"
+                android:layout_width="10sp"
+                android:layout_height="15sp"
+                android:layout_marginLeft="3dp"
+                android:layout_alignBottom="@+id/payAmount"
+                android:layout_toRightOf="@+id/payAmount"
+                android:src="@drawable/ic_pay_elc"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:textColor="#ffeb5f8d"
+            android:textSize="10sp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="余额不足，请先充值"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/tvPay"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gl_dialog_btn"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="#ff333333"
+            android:textSize="13sp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="支付" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/cancel"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_close"/>
+
+</RelativeLayout>

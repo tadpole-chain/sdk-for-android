@@ -39,7 +39,7 @@ public class UnityPlayerActivity extends Activity
 
 		TCT.instance().initialize(this,
 				"your app key",
-				"your app secret key");
+				"your app secret key", false);
 		TCT.instance().setFloatBtn(floatBtn);
 	}
 

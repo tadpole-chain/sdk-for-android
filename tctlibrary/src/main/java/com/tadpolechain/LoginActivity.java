@@ -11,14 +11,19 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 public class LoginActivity extends Activity {
 
@@ -62,9 +67,11 @@ public class LoginActivity extends Activity {
 
     /**--------------------广告功能------------------**/
 
-    ImageView adClose;
+    RelativeLayout adMiddle;
 
-    ImageView ivAdPic;
+    ImageView adCloseMiddle;
+
+    ImageView ivAdPicMiddle;
 
     /**--------------------领取TCT功能------------------**/
 
@@ -90,6 +97,20 @@ public class LoginActivity extends Activity {
 
     TextView tvApp;
 
+    /**--------------------支付功能------------------**/
+
+    TextView payInfo;
+
+    TextView tctBalance;
+
+    TextView scoreBalance;
+
+    TextView payAmount;
+
+    TextView tvPay;
+
+    int payStatus = 0;
+
     String type;
 
     @Override
@@ -102,6 +123,8 @@ public class LoginActivity extends Activity {
             initAd();
         } else if(type != null && type.equals("tct")){
             initTct();
+        } else if(type != null && type.equals("pay")){
+            initPay();
         } else {
             initLogin();
         }
@@ -133,7 +156,7 @@ public class LoginActivity extends Activity {
         tvApp.setOnClickListener(tctClickListener);
         tvNickname.setText("" + TCT.instance().getNickname());
         tvDuration.setText(String.format("%.2f", TCT.instance().getDuration()) + "小时");
-        tvProfit.setText(String.format("%.2f", TCT.instance().getExpectProfit()) + "tct");
+        tvProfit.setText(String.format("%.2f", TCT.instance().getExpectProfit()) + "TCT");
         if(TCT.instance().getUser().getStatus() < 200){
             tvGet.setText("激活账户");
             tvProfit.setTextColor(0xff6b6b6b);
@@ -145,16 +168,98 @@ public class LoginActivity extends Activity {
         }
     }
 
+    public void initPay(){
+        setContentView(TCT.getResource(LoginActivity.this,
+                "layout", "activity_pay"));
+
+        tctClose = (ImageView)findViewById(getId("cancel"));
+        payInfo = (TextView) findViewById(getId("payInfo"));
+        tctBalance = (TextView) findViewById(getId("tctBalance"));
+        scoreBalance = (TextView) findViewById(getId("scoreBalance"));
+        payAmount = (TextView) findViewById(getId("payAmount"));
+        tvPay = (TextView) findViewById(getId("tvPay"));
+        tvMsg = (TextView) findViewById(getId("tvMsg"));
+
+        tctClose.setOnClickListener(payClickListener);
+        tvPay.setOnClickListener(payClickListener);
+        payInfo.setText(TCT.content + "【" + TCT.game.getName() + "】");
+        tvPay.setText("加载中");
+        payStatus = 1;
+
+        TCT.instance().loadUserBalance(new TCTCallback() {
+            @Override
+            public void success() {
+                handler.post(getBanlance);
+                payStatus = 2;
+            }
+
+            @Override
+            public void error(int errCode, String msg) {
+                handler.post(new BanlanceError(errCode, msg));
+            }
+        });
+    }
+
+    public class BanlanceError implements Runnable {
+        private int errCode;
+        private String msg;
+
+        public BanlanceError(int errCode, String msg){
+            this.errCode = errCode;
+            this.msg = msg;
+        }
+
+        @Override
+        public void run() {
+            if(TCT.onPayResultListener != null){
+                TCT.onPayResultListener.fail(errCode, msg);
+            } else {
+                Toast.makeText(LoginActivity.this, "" + msg, Toast.LENGTH_SHORT).show();
+            }
+            finish();
+        }
+    };
+
+    Runnable getBanlance = new Runnable() {
+        @Override
+        public void run() {
+            tctBalance.setText(String.format("可用：%.4f tct", TCT.user.getTct_balance()));
+            scoreBalance.setText("可用：" + TCT.user.getScore());
+            payAmount.setText(String.format("%.4f", TCT.amount / TCT.user.getRmb_rate()));
+            if(TCT.amount / TCT.user.getRmb_rate() > TCT.user.getTct_balance()) {
+                tvMsg.setVisibility(View.VISIBLE);
+                tvPay.setTextColor(0xff606b8d);
+                tvPay.setBackgroundResource(getDrawable("btn_pay_un"));
+            }
+            tvPay.setText("支付");
+        }
+    };
+
     public void initAd(){
         setContentView(TCT.getResource(LoginActivity.this,
                 "layout", "activity_ad"));
-        adClose = (ImageView)findViewById(getId("ivClose"));
-        ivAdPic = (ImageView)findViewById(getId("ivAdPic"));
+        adMiddle = (RelativeLayout) findViewById(getId("adMiddle"));
+        adCloseMiddle = (ImageView)findViewById(getId("ivCloseMiddle"));
+        ivAdPicMiddle = (ImageView)findViewById(getId("ivAdPicMiddle"));
 
-        adClose.setOnClickListener(adClickListener);
-        ivAdPic.setOnClickListener(adClickListener);
+        adCloseMiddle.setOnClickListener(adClickListener);
+        ivAdPicMiddle.setOnClickListener(adClickListener);
 
-        TCT.instance().loadAd(adTCTCallback);
+        if(TCT.instance().getAd().getAd_position() == null ||
+                TCT.instance().getAd().getAd_position().equals("CENTER")){
+            String url = TCT.instance().getAd().getImage();
+            if(TCT.orientation.equals("1")){
+                url = TCT.instance().getAd().getImage_h();
+            }
+            adMiddle.setVisibility(View.VISIBLE);
+            Glide.with(LoginActivity.this).load(url)
+                    .transform(new GlideCircleTransform(LoginActivity.this, false, 0.05F))
+                    .error(getDrawable("ic_ad_default")).placeholder(getDrawable("ic_ad_default"))
+                    .into(ivAdPicMiddle);
+        } else {
+            finish();
+            TCT.instance().setAd(null);
+        }
     }
 
     public void initLogin(){
@@ -248,6 +353,60 @@ public class LoginActivity extends Activity {
         });
     }
 
+    View.OnClickListener payClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(view.getId() == tctClose.getId()) {
+                if(TCT.onPayResultListener != null){
+                    TCT.onPayResultListener.fail(100, "您取消了支付");
+                } else {
+                    Toast.makeText(LoginActivity.this, "您取消了支付", Toast.LENGTH_SHORT).show();
+                }
+                finish();
+            } else if(view.getId() == tvPay.getId()){
+                if(payStatus < 2) {
+                    Toast.makeText(LoginActivity.this, "正在加载数据", Toast.LENGTH_SHORT).show();
+                } else if(TCT.amount / TCT.user.getRmb_rate() > TCT.user.getTct_balance()) {
+                    Toast.makeText(LoginActivity.this, "余额不足", Toast.LENGTH_SHORT).show();
+                } else {
+                    if(payStatus == 3){
+                        Toast.makeText(LoginActivity.this, "正在支付中……", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    payStatus = 3;
+                    TCT.instance().pay(TCT.amount, TCT.content, new TCTCallback() {
+                        @Override
+                        public void success() {
+                            payStatus = 4;
+                            handler.post(paySuccess);
+                        }
+
+                        @Override
+                        public void error(int errCode, String msg) {
+                            payStatus = 4;
+                            handler.post(new BanlanceError(errCode, msg));
+                        }
+                    });
+                }
+            }
+        }
+    };
+
+    Runnable paySuccess = new Runnable() {
+        @Override
+        public void run() {
+            if(TCT.onPayResultListener != null){
+                if(TCT.payType == null){
+                    TCT.onPayResultListener.success(0, 0, 0, "");
+                } else {
+                    TCT.onPayResultListener.success(TCT.payType.getType(),
+                            TCT.payType.getAmount(), TCT.payType.getProfit(), TCT.payType.getId());
+                }
+            }
+            finish();
+        }
+    };
+
     View.OnClickListener tctClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -316,7 +475,7 @@ public class LoginActivity extends Activity {
     TCTCallback settleTCTCallback = new TCTCallback() {
         @Override
         public void success() {
-            Toast.makeText(LoginActivity.this, "领取成功：" + TCT.settlement.getProfit() + "tct",
+            Toast.makeText(LoginActivity.this, String.format("领取成功：%.6fTCT", TCT.settlement.getProfit()),
                     Toast.LENGTH_LONG).show();
             tvDuration.setText("0小时");
             tvProfit.setText("0tct");
@@ -334,20 +493,22 @@ public class LoginActivity extends Activity {
     View.OnClickListener adClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(view.getId() == adClose.getId()) {
+            if(view.getId() == adCloseMiddle.getId()) {
                 finish();
-            } else if(view.getId() == ivAdPic.getId()) {
+            } else if(view.getId() == ivAdPicMiddle.getId()) {
                 if(TCT.instance().getAd() == null) {
                     return;
                 }
-                String url = TCT.instance().getAd().getContent();
+                String url = TCT.instance().getAd().getAd_url();
                 if(url != null && url.length() > 0){
+                    TCT.instance().clickAd();
                     Uri uri = Uri.parse(url);
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
                 }
                 finish();
             }
+            TCT.instance().setAd(null);
         }
     };
 
@@ -466,21 +627,6 @@ public class LoginActivity extends Activity {
         public void error(int errCode, String msg) {
             LoginActivity.this.msg = msg;
             handler.post(show);
-        }
-    };
-
-    TCTCallback adTCTCallback = new TCTCallback() {
-        @Override
-        public void success() {
-            Glide.with(LoginActivity.this).load(TCT.instance().getAd().getImage())
-                    .transform(new GlideCircleTransform(LoginActivity.this, false, 0.05F))
-                    .error(getDrawable("ic_ad_default")).placeholder(getDrawable("ic_ad_default"))
-                    .into(ivAdPic);
-        }
-
-        @Override
-        public void error(int errCode, String msg) {
-            finish();
         }
     };
 
