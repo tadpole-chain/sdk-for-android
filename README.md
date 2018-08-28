@@ -1,16 +1,16 @@
 sdk-for-android
 ====
 
-Unity����˵��
+Unity接入说明
 ----
 
-# 1.������������Ŀ
-��Unity����Android��Ŀ��A����������һ�ݣ�B������ΪAndroid Studio�༭����Ŀ��֮��ÿ�ε�������A��Ȼ��A��Ŀ��src\main\assets\bin�е��ļ���������ĿB����Ӧ��λ�ã���Ϊÿ�ε�������ֻ����һ�������ݻᷢ���仯����
-# 2.�ϲ���Դ�ļ�
-��res�е��ļ�ȫ�����Ƶ���Ŀ��src\main\res�У�����г�ͻ����ֱ�Ӹ��ǡ���Դ�ļ���������������Ӱ����Ϸ���С�
-# 3.����SDK
-���ļ�tct_v1.0.2.jar��������Ŀlibs�ļ����¡�<br>
-����Ŀ�е�AndroidManifest.xml�ļ��м������Ȩ�ޣ�<br>
+# 1.导出并复制项目
+从Unity导出Android项目（A），并复制一份（B），作为Android Studio编辑的项目。之后每次导出都用A，然后将A项目里src\main\assets\bin中的文件拷贝到项目B中相应的位置（因为每次导出，都只有这一部分数据会发生变化）。
+# 2.合并资源文件
+将res中的文件全部复制到项目里src\main\res中，如果有冲突，则直接覆盖。资源文件已做处理，不会影响游戏运行。
+# 3.引入SDK
+将文件tct_v1.1.0.jar拷贝到项目libs文件夹下。<br>
+在项目中的AndroidManifest.xml文件中加入相关权限：<br>
 ```xml
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -19,50 +19,58 @@ Unity����˵��
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 ```
 
-��app�е�AndroidManifest.xml�ļ��м���SDK�ĵ�¼����������<br>
+在app中的AndroidManifest.xml文件中加入SDK的登录界面声明：<br>
 ```xml
 <activity android:name="com.tadpolechain.LoginActivity"
     android:theme="@style/LoginDialog" />
 ```
 
-# 4.�ϲ�activity
-��UnityPlayerActivity�ļ�����Ŀ�е�UnityPlayerActivity�ļ��ϲ����滻���˰���������һ�е�package��������������ݣ�����onCreate�������app key��secret key�滻Ϊ�Լ��ġ�
-# 5.�޸İ汾�ź���Ϸ����
-�����Ҫ�޸İ汾�ţ����AndroidManifest.xml�ļ����޸��������ݣ�<br>
+# 4.合并activity
+将UnityPlayerActivity文件和项目中的UnityPlayerActivity文件合并，替换除了包名（即第一行的package）以外的所有内容，并将onCreate方法里的app key和secret key替换为自己的。<br>
+【注意】该初始化方法的最后一个参数，意思为是否测试中。测试的话则为true，调用测试服务器数据。
+# 5.修改版本号和游戏名称
+如果需要修改版本号，则打开AndroidManifest.xml文件，修改以下内容：<br>
 ![](http://img.suncity.ink/github/2018/05/git_0001.png) <br>
-����޸���Ϸ���ƣ�����ļ�src\main\res\values\strings.xml���޸�app_name:<br>
+如果修改游戏名称，则打开文件src\main\res\values\strings.xml，修改app_name:<br>
 ![](http://img.suncity.ink/github/2018/05/git_0002.png) 
-# 6.����Unity��װ�ļ�
-��TCTForUnity.cs��������Ŀ��ӦĿ¼��TCTForUnity�еķ����Ѿ��Խӵ�SDK������ֱ�ӵ��á����÷�����TestClick.cs�ļ���ʾ��
-# 7.�ص�����
-����SDK�����ĵ�����Ҫ�ص��������¼���ܣ�TestClick.cs�еĵ��÷���������ʾ��<br>
+# 6.引入Unity封装文件
+将TCTForUnity.cs拷贝到项目相应目录。TCTForUnity中的方法已经对接到SDK，可以直接调用。调用范例如TestClick.cs文件所示。
+# 7.回调方法
+部分SDK方法的调用需要回调，比如登录功能，TestClick.cs中的调用方法如下所示：<br>
 ![](http://img.suncity.ink/github/2018/05/git_0003.png)<br>
-��ĿĿ¼���£�<br>
+项目目录如下：<br>
 ![](http://img.suncity.ink/github/2018/05/git_0004.png)<br>
-��һ������Canvas�������ǽű������صĳ������ƣ��ڶ��������������ǻص��������ơ�
-# 8. ��װ�������
-## ��¼����(login)
-���ü��ɵ�¼���������ӻص��������ص������Ĳ�����һ���ַ����������¼�ɹ��򷵻�success��Ȼ����Ի���û���Ϣ�������¼ʧ�ܣ��򷵻�ʧ�ܵ�ԭ��
-## ���߷���(online)
-���֮ǰ��¼����Ϸ���ٴδ���Ϸ���Զ����ߣ��˷��������ڴ��ݻص�������
-## ���SDK״̬(getStatus)
-��¼״̬������ֵ��<br>
+第一个参数Canvas代表的是脚本所挂载的场景名称，第二个参数代表的是回调方法名称。
+# 8. 封装方法简介
+## 登录方法(login)
+调用即可登录，可以添加回调方法，回调方法的参数是一个字符串，如果登录成功则返回success，然后可以获得用户信息，如果登录失败，则返回失败的原因。
+## 上线方法(online)
+如果之前登录过游戏，再次打开游戏会自动上线，此方法仅用于传递回调方法。
+## 获得SDK状态(getStatus)
+登录状态有以下值：<br>
 ```table
 TCTForUnity.Status_Unavailable	0	
 TCTForUnity.Status_Initial	1	
-TCTForUnity.Status_Login	201	�Ѿ���¼
-TCTForUnity.Status_Online	200	�Ѿ�����
-TCTForUnity.Status_Offline	500	�Ѿ�����
+TCTForUnity.Status_Login	201	已经登录
+TCTForUnity.Status_Online	200	已经上线
+TCTForUnity.Status_Offline	500	已经下线
 ```
 
-## ����û���Ϣ(getUserInfo)
-���Ի���ַ������͵��û���Ϣ����ʱ��֧�����²�����Id��Nickname��Avatar��
-## ��ʾ���(showAd)
-���ÿ�����ʾ�����Ϣ��
-## ���͹���(showMsg)
-���ô˷���������һ���ַ������������ʾ������������ƹ�������
-## ���͵÷�(sendScore)
-���ô˷��������������������һ��float�͵ķ������û����а����򡣴˷������Դ��ص���
-## ������������(sendData)
-���ô˷��������������������һ����ֵ�ԡ�����key��һ��С��100�ֽڵ��ַ������������������࣬score��һ��float�͵ķ�����������������ͳ�ƺͷ������˷������Դ��ص���
-
+## 获得用户信息(getUserInfo)
+可以获得字符串类型的用户信息，暂时仅支持以下参数：Id、Nickname、Avatar。
+## 发送公告(showMsg)
+调用此方法，传入一个字符串，则可以显示在上面的跑马灯公告栏。
+## 发送得分(sendScore)
+调用此方法，可以向服务器发送一个float型的分数，用户排行榜排序。此方法可以带回调。
+## 发送其他数据(sendData)
+调用此方法，可以向服务器发送一个键值对。其中key是一个小于100字节的字符串，代表了数据种类，score是一个float型的分数，可以用于数据统计和分析。此方法可以带回调。
+## 支付(pay)
+调用实现支付功能，成功后可以获得PayType数据如下：
+```
+{
+        "id":"79f3662c-a5f4-11e8-9a64-00163e006954", // 订单号
+        "profit":0.857143, // 支付的金额，type为0时，代表TCT金额
+        "amount":1.8, // 支付的人民币金额
+        "type":0 // 支付方式，0代表TCT支付
+ }
+```
