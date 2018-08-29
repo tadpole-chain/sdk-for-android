@@ -1,16 +1,19 @@
 sdk-for-android
-====
 
-Unity接入说明
+[中文文档](./README.md "中文文档")
+
+====
+Unity access instructions
 ----
 
-# 1.导出并复制项目
-从Unity导出Android项目（A），并复制一份（B），作为Android Studio编辑的项目。之后每次导出都用A，然后将A项目里src\main\assets\bin中的文件拷贝到项目B中相应的位置（因为每次导出，都只有这一部分数据会发生变化）。
-# 2.合并资源文件
-将res中的文件全部复制到项目里src\main\res中，如果有冲突，则直接覆盖。资源文件已做处理，不会影响游戏运行。
-# 3.引入SDK
-将文件tct_v1.1.0.jar拷贝到项目libs文件夹下。<br>
-在项目中的AndroidManifest.xml文件中加入相关权限：<br>
+# 1. Export and copy the project
+Export the Android project (A) from Unity and copy one (B) as a project edited by Android Studio. Then use A for each export, and then copy the files in src\main\assets\bin in the A project to the corresponding position in project B (because only this part of the data changes every time you export).
+# 2. Merge resource files
+Copy all the files in res to src\main\res in the project. If there is a conflict, it will be overwritten directly. The resource file has been processed and will not affect the game running.
+# 3. Introducing the SDK
+Copy the file tct_v1.1.0.jar to the project libs folder. <br>
+Add the relevant permissions in the AndroidManifest.xml file in the project:<br>
+
 ```xml
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -19,58 +22,58 @@ Unity接入说明
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 ```
 
-在app中的AndroidManifest.xml文件中加入SDK的登录界面声明：<br>
+Add the SDK login interface declaration in the AndroidManifest.xml file in the app:<br>
+
 ```xml
 <activity android:name="com.tadpolechain.LoginActivity"
     android:theme="@style/LoginDialog" />
 ```
 
-# 4.合并activity
-将UnityPlayerActivity文件和项目中的UnityPlayerActivity文件合并，替换除了包名（即第一行的package）以外的所有内容，并将onCreate方法里的app key和secret key替换为自己的。<br>
-【注意】该初始化方法的最后一个参数，意思为是否测试中。测试的话则为true，调用测试服务器数据。
-# 5.修改版本号和游戏名称
-如果需要修改版本号，则打开AndroidManifest.xml文件，修改以下内容：<br>
+# 4. Merge activity
+Combine the UnityPlayerActivity file with the UnityPlayerActivity file in the project, replace everything except the package name (ie the first line of the package), and replace the app key and secret key in the onCreate method with your own. <br>
+[Note] The last parameter of the initialization method means whether it is being tested. If it is tested, it is true, and the test server data is called.
+# 5. Modify the version number and game name
+If you need to change the version number, open the AndroidManifest.xml file and modify the following:<br>
 ![](http://img.suncity.ink/github/2018/05/git_0001.png) <br>
-如果修改游戏名称，则打开文件src\main\res\values\strings.xml，修改app_name:<br>
-![](http://img.suncity.ink/github/2018/05/git_0002.png) 
-# 6.引入Unity封装文件
-将TCTForUnity.cs拷贝到项目相应目录。TCTForUnity中的方法已经对接到SDK，可以直接调用。调用范例如TestClick.cs文件所示。
-# 7.回调方法
-部分SDK方法的调用需要回调，比如登录功能，TestClick.cs中的调用方法如下所示：<br>
+If you modify the game name, open the file src\main\res\values\strings.xml and modify app_name:<br>![](http://img.suncity.ink/github/2018/05/git_0002.png) 
+# 6. Introducing Unity package files
+Copy TCTForUnity.cs to the appropriate directory of the project. The method in TCTForUnity has been connected to the SDK and can be called directly. Call the van as shown in the TestClick.cs file.
+# 7. Callback method
+Calls to some SDK methods require callbacks, such as the login function. The calling methods in TestClick.cs are as follows:<br>
 ![](http://img.suncity.ink/github/2018/05/git_0003.png)<br>
-项目目录如下：<br>
+The project directory is as follows:<br>
 ![](http://img.suncity.ink/github/2018/05/git_0004.png)<br>
-第一个参数Canvas代表的是脚本所挂载的场景名称，第二个参数代表的是回调方法名称。
-# 8. 封装方法简介
-## 登录方法(login)
-调用即可登录，可以添加回调方法，回调方法的参数是一个字符串，如果登录成功则返回success，然后可以获得用户信息，如果登录失败，则返回失败的原因。
-## 上线方法(online)
-如果之前登录过游戏，再次打开游戏会自动上线，此方法仅用于传递回调方法。
-## 获得SDK状态(getStatus)
-登录状态有以下值：<br>
+The first parameter, Canvas, represents the name of the scene that the script is mounted on, and the second parameter represents the name of the callback method.
+# 8. Introduction to the package method
+## Login method (login)
+Call to log in, you can add a callback method, the parameter of the callback method is a string, if the login is successful, return success, and then get the user information, if the login fails, return the reason for the failure.
+## Online method (online)
+If you have logged in to the game before, opening the game again will automatically go online. This method is only used to pass the callback method.
+## Get SDK status (getStatus)
+The login status has the following values:<br>
 ```table
 TCTForUnity.Status_Unavailable	0	
 TCTForUnity.Status_Initial	1	
-TCTForUnity.Status_Login	201	已经登录
-TCTForUnity.Status_Online	200	已经上线
-TCTForUnity.Status_Offline	500	已经下线
+TCTForUnity.Status_Login	201	Already logged in
+TCTForUnity.Status_Online	200	Already online
+TCTForUnity.Status_Offline	500	Already offline
 ```
 
-## 获得用户信息(getUserInfo)
-可以获得字符串类型的用户信息，暂时仅支持以下参数：Id、Nickname、Avatar。
-## 发送公告(showMsg)
-调用此方法，传入一个字符串，则可以显示在上面的跑马灯公告栏。
-## 发送得分(sendScore)
-调用此方法，可以向服务器发送一个float型的分数，用户排行榜排序。此方法可以带回调。
-## 发送其他数据(sendData)
-调用此方法，可以向服务器发送一个键值对。其中key是一个小于100字节的字符串，代表了数据种类，score是一个float型的分数，可以用于数据统计和分析。此方法可以带回调。
-## 支付(pay)
-调用实现支付功能，成功后可以获得PayType数据如下：
+## Get user information (getUserInfo)
+You can obtain user information of the string type. Currently, only the following parameters are supported: Id, Nickname, and Avatar.
+## Send announcement (showMsg)
+Call this method, passing in a string, you can display the marquee bulletin board above.
+## Send score (sendScore)
+Call this method, you can send a float type score to the server, sorting the user leaderboard. This method can take a callback.
+## Send other data (sendData)
+Call this method to send a key-value pair to the server. The key is a string of less than 100 bytes, representing the type of data, and score is a type of float that can be used for data statistics and analysis. This method can take a callback.
+## payments (pay)
+Call the implementation of the payment function, after successful, you can get the PayType data as follows:
 ```
 {
-        "id":"79f3662c-a5f4-11e8-9a64-00163e006954", // 订单号
-        "profit":0.857143, // 支付的金额，type为0时，代表TCT金额
-        "amount":1.8, // 支付的人民币金额
-        "type":0 // 支付方式，0代表TCT支付
+        "id":"79f3662c-a5f4-11e8-9a64-00163e006954", // order number
+        "profit":0.857143, // The amount paid, when the type is 0, represents the TCT amount
+        "amount":1.8, // The amount of RMB paid
+        "type":0 // Payment method, 0 means TCT payment
  }
 ```
