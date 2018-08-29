@@ -1,6 +1,6 @@
 sdk-for-android
 ====
-
+[English](./README_EN.md "English Document")
 Unity接入说明
 ----
 
