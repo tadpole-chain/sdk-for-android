@@ -68,7 +68,12 @@ Call this method, you can send a float type score to the server, sorting the use
 ## Send other data (sendData)
 Call this method to send a key-value pair to the server. The key is a string of less than 100 bytes, representing the type of data, and score is a type of float that can be used for data statistics and analysis. This method can take a callback.
 ## payments (pay)
-Call the implementation of the payment function, after successful, you can get the PayType data as follows:
+Call the implementation of the payment function, parameters:
+```
+amount：Recharge amount of RMB
+content：the goods for pay, can't be empty，for example "Recharge 500 gold coins"
+```
+After successful, you can get the PayType data as follows:
 ```
 {
         "id":"79f3662c-a5f4-11e8-9a64-00163e006954", // order number
